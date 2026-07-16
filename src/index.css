@@ -47,7 +47,7 @@ main {
   flex: 1;
 }
 
-.editor-panel,
+.code-panel,
 .preview-panel {
   background: #111827;
   border-radius: 16px;
@@ -58,27 +58,32 @@ main {
   min-height: 0;
 }
 
-.editor-panel > #editor {
+.code-block {
   flex: 1;
-  min-height: 600px;
+  padding: 20px;
+  overflow: auto;
+  font-family: 'SF Mono', 'Fira Code', 'Roboto Mono', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #e2e8f0;
 }
 
-.editor-error {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  min-height: 400px;
-  text-align: center;
-  color: #f87171;
-  padding: 40px;
-  gap: 16px;
+.code-block code {
+  display: block;
+  color: #06bed6;
+  margin-bottom: 4px;
 }
 
-.editor-error p {
-  font-size: 14px;
-  line-height: 1.5;
+.code-block p {
+  margin-bottom: 12px;
+  color: #94a3b8;
+}
+
+.code-block .hint {
+  margin-top: 16px;
+  color: #64748b;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 12px;
 }
 
 .panel-header {
