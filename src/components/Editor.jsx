@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const templateDesign = {
   body: {
@@ -249,63 +249,98 @@ const templateDesign = {
 };
 
 function Editor({ setPreviewHTML }) {
+  const [error, setError] = useState(null);
+  const scriptRef = useRef(null);
+  const handlersRef = useRef(null);
 
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://editor.unlayer.com/embed.js";
-    script.onload = () => {
-      window.unlayer.init({
-        id: "editor",
-        projectId: "YOUR_PROJECT_ID",
-        displayMode: "email",
-        appearance: {
-          theme: "modern_dark"
-        },
-        safeHtml: true
-      });
+    const updatePreview = () => {
+      if (!window.unlayer) return;
 
-      window.unlayer.loadDesign(templateDesign);
-
-      window.unlayer.addEventListener("design:loaded", () => {
-        const html = window.unlayer.exportHtml({
-          format: "html"
-        });
-        if (html) {
-          setPreviewHTML(html.html);
-        }
-      });
-
-      window.unlayer.addEventListener("design:updated", () => {
-        const html = window.unlayer.exportHtml({
-          format: "html"
-        });
-        if (html) {
-          setPreviewHTML(html.html);
-        }
-      });
-
-      window.unlayer.addEventListener("design:export", (data) => {
+      window.unlayer.exportHtml((data) => {
         if (data && data.html) {
           setPreviewHTML(data.html);
         }
       });
     };
-    document.body.appendChild(script);
 
-    return () => {
-      if (window.unlayer) {
-        window.unlayer.removeEventListener("design:loaded");
-        window.unlayer.removeEventListener("design:updated");
-        window.unlayer.removeEventListener("design:export");
+    const handleDesignLoaded = () => {
+      updatePreview();
+    };
+
+    const handleDesignUpdated = () => {
+      updatePreview();
+    };
+
+    const handleDesignExport = (data) => {
+      if (data && data.html) {
+        setPreviewHTML(data.html);
       }
     };
-  }, []);
+
+    handlersRef.current = {
+      designLoaded: handleDesignLoaded,
+      designUpdated: handleDesignUpdated,
+      designExport: handleDesignExport
+    };
+
+    if (window.unlayer) {
+      initEditor();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://editor.unlayer.com/embed.js";
+    script.async = true;
+
+    script.onload = () => {
+      initEditor();
+    };
+
+    script.onerror = () => {
+      setError("Failed to load Elements editor. Check your internet connection and try again.");
+    };
+
+    document.body.appendChild(script);
+    scriptRef.current = script;
+
+    function initEditor() {
+      try {
+                window.unlayer.init({
+                  id: "editor",
+                  projectId: "288226",
+                  displayMode: "email",
+                  appearance: {
+                    theme: "modern_dark"
+                  }
+                });
+
+        window.unlayer.loadDesign(templateDesign);
+
+        window.unlayer.addEventListener("design:loaded", handleDesignLoaded);
+        window.unlayer.addEventListener("design:updated", handleDesignUpdated);
+        window.unlayer.addEventListener("design:export", handleDesignExport);
+      } catch (err) {
+        setError("Failed to initialize Elements editor: " + err.message);
+      }
+    }
+
+    return () => {
+      if (scriptRef.current && scriptRef.current.parentNode) {
+        scriptRef.current.parentNode.removeChild(scriptRef.current);
+      }
+      if (window.unlayer && handlersRef.current) {
+        window.unlayer.removeEventListener("design:loaded", handlersRef.current.designLoaded);
+        window.unlayer.removeEventListener("design:updated", handlersRef.current.designUpdated);
+        window.unlayer.removeEventListener("design:export", handlersRef.current.designExport);
+      }
+    };
+  }, [setPreviewHTML]);
 
   function exportHTML() {
     if (window.unlayer) {
       window.unlayer.exportHtml((data) => {
         setPreviewHTML(data.html);
-        
         const blob = new Blob([data.html], { type: "text/html" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -323,6 +358,22 @@ function Editor({ setPreviewHTML }) {
     }
   }
 
+  if (error) {
+    return (
+      <section className="editor-panel">
+        <div className="panel-header">
+          <h2>Template Editor</h2>
+        </div>
+        <div className="editor-error">
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()} className="btn-primary">
+            Retry
+          </button>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="editor-panel">
       <div className="panel-header">
@@ -336,7 +387,7 @@ function Editor({ setPreviewHTML }) {
           </button>
         </div>
       </div>
-      <div id="editor" style={{ height: "100%", minHeight: "600px" }} />
+      <div id="editor" style={{ flex: 1, minHeight: "600px" }} />
     </section>
   );
 }
