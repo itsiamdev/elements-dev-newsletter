@@ -1,6 +1,6 @@
-# DevPulse Weekly — Elements Template
+# DevPulse Weekly — Build with Elements Challenge
 
-An original developer newsletter email template built with [Unlayer (Elements)](https://www.unlayer.com/) React components. Designed for the **Build with Elements Challenge**, DevPulse Weekly demonstrates how to compose emails with `@unlayer/react-elements` and render them to production-ready HTML.
+An original developer newsletter email template built with [Unlayer (Elements)](https://www.unlayer.com/) React components. This project was created for the **Build with Elements Challenge** and demonstrates how to compose emails with `@unlayer/react-elements` and render them to production-ready HTML.
 
 ![Build with Elements Challenge](https://img.shields.io/badge/Build%20with%20Elements-Challenge-blue)
 ![React](https://img.shields.io/badge/React-19.x-61dafb)
@@ -21,6 +21,14 @@ DevPulse Weekly is a fully editable email newsletter template built declarativel
 ### Live Preview
 
 Click **Render Preview** to generate the email HTML from the Elements component tree and display it in an isolated iframe. Click **Export HTML** to download the final template file.
+
+## Challenge Criteria
+
+This submission meets all Build with Elements Challenge requirements:
+
+- ✅ **Elements is a core part of the project** — The entire template is built with `@unlayer/react-elements` components (`<Email>`, `<Row>`, `<Column>`, `<Heading>`, `<Paragraph>`, `<Button>`, `<Divider>`, `<Image>`, `<Html>`, `<Social>`, `<Menu>`) and rendered using `renderToHtml()`
+- ✅ **Public repository with complete source code** — Available at `https://github.com/itsiamdev/elements-dev-newsletter`
+- ✅ **Clear README with screenshots** — This document explains the project, how to run it, and includes screenshots of the rendered template
 
 ## Getting Started
 
